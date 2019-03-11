@@ -1,5 +1,12 @@
-import React from 'react';
+import React from "react";
 
-const BadGuesses = (props) => {
-
-}
+const BadGuesses = props => {
+  return (
+    <ul>
+      {props.guesses.map(element => {
+        return <li>{element}</li>;
+      })}
+    </ul>
+  );
+};
+export default BadGuesses;
