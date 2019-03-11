@@ -4,7 +4,7 @@ const BadGuesses = props => {
   return (
     <ul>
       {props.guesses.map(element => {
-        return <li>{element}</li>;
+        return <li key={element}>{element}</li>;
       })}
     </ul>
   );

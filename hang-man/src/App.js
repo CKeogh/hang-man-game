@@ -3,17 +3,20 @@ import "./App.css";
 import images from "./hangmanImages/images.js";
 import Image from "./components/Image";
 import GuessBox from "./components/GuessBox";
-import { separateLetters } from "./utils/separateLettes";
+import { separateLetters } from "./utils/separateLetters";
 import Answer from "./components/Answer";
 import BadGuesses from "./components/BadGuesses";
+import wordsList from "./utils/wordsList";
+import Button from "./components/Button";
 
-const word = "testing";
+const word = wordsList[Math.floor(Math.random() * wordsList.length)];
 
 class App extends Component {
   state = {
     images,
-    word: { word, wordArr: separateLetters(word) },
-    guesses: []
+    wordData: { word: word.toUpperCase(), wordArr: separateLetters(word) },
+    guesses: [],
+    won: false
   };
 
   render() {
@@ -21,20 +24,33 @@ class App extends Component {
     return (
       <div className="App">
         <h1>Hangman</h1>
-        <Image image={images[0]} />
+        <Image image={images.hangman[this.state.guesses.length]} won={this.state.won} wonImage={images.imageWinner} />
+        <Answer word={this.state.wordData.wordArr} />
+        <h4>Incorrect guesses:</h4>
         <BadGuesses guesses={this.state.guesses} />
-        <GuessBox handleChange={this.handleChange} />
-        <Answer word={this.state.word.wordArr} />
+        <GuessBox handleSubmit={this.handleSubmit} />
+        <Button />
       </div>
     );
   }
 
-  handleChange = event => {
+  handleSubmit = event => {
     event.preventDefault();
-    const input = event.target.value;
-    console.log(event);
-    // console.log(this.state.word.word.includes(input));
-    // this.state.word.includes(input) ?
+    let guess = event.target.children[0].value.toUpperCase();
+    console.log(guess)
+    console.log(this.state.wordArr)
+    if (this.state.wordData.word.includes(guess)) {
+      const newWordArr = this.state.wordData.wordArr.map(letterObj => {
+        if (letterObj.letter === guess) letterObj.hidden = false;
+        return letterObj;
+      })
+      if (this.state.wordData.wordArr.every(letterObj => letterObj.hidden === false)) this.setState({ won: true });
+      this.setState({ wordData: { word: word.toUpperCase(), wordArr: newWordArr } });
+    } else {
+
+      this.setState({ guesses: [...this.state.guesses, guess] })
+    }
+    event.target.children[0].value = '';
   };
 }
 
